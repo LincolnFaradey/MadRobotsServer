@@ -25,7 +25,7 @@ func Game(ws *websocket.Conn)  {
 			return
 		}
 		player.Socket = ws
-
+		activePlayers[player.Name] = player
 		fmt.Println(player)
 		for k, v := range activePlayers {
 			if k == player.Name { continue }
