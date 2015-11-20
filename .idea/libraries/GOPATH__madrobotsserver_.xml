@@ -1,0 +1,27 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;madrobotsserver&gt;">
+    <CLASSES>
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/github.com" />
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/golang.org" />
+      <root url="file://$PROJECT_DIR$/../.." />
+      <root url="file://$PROJECT_DIR$/../../../.DS_Store" />
+    </CLASSES>
+    <SOURCES />
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/github.com/nfnt/resize/.git" />
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/golang.org/x/net/http2/testdata" />
+      <root url="file://$PROJECT_DIR$/../messengerApp/.idea" />
+      <root url="file://$PROJECT_DIR$/.idea" />
+      <root url="file://$PROJECT_DIR$/../../.idea" />
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/golang.org/x/net/html/testdata" />
+      <root url="file://$PROJECT_DIR$/.git" />
+      <root url="file://$PROJECT_DIR$/../websocketapp/.idea" />
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/github.com/mattn/go-sqlite3/_example" />
+      <root url="file://$PROJECT_DIR$/../messengerApp/.git" />
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/github.com/mattn/go-sqlite3/.git" />
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/golang.org/x/net/html/charset/testdata" />
+      <root url="file:///usr/local/Cellar/go/1.5.1/src/golang.org/x/net/.git" />
+    </excluded>
+  </library>
+</component>
