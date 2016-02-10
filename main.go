@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"golang.org/x/net/websocket"
 	"net/http"
+	"os/signal"
+	"os"
+	"syscall"
 )
 
 var activePlayers = make(map[string]Player)
@@ -13,6 +16,11 @@ type Player struct {
 	X      float32         `json:"x"`
 	Y      float32         `json:"y"`
 	Socket *websocket.Conn `json:"-"`
+}
+
+type Message struct {
+	Method string `json:"method"`
+	UserName string `json:"name"`
 }
 
 func Game(ws *websocket.Conn) {
@@ -36,16 +44,19 @@ func Game(ws *websocket.Conn) {
 				delete(activePlayers, k)
 
 				go func() {
-					for _, p := range activePlayers {
-						websocket.JSON.Send(p.Socket, &Player{
-							Name: k,
-							X:    0,
-							Y:    0,
-						})
-					}
+					sendMessageAll(&Message{
+						Method: "destroy",
+						UserName: k,
+					})
 				}()
 			}
 		}
+	}
+}
+
+func sendMessageAll(msg *Message)  {
+	for _, p := range activePlayers {
+		websocket.JSON.Send(p.Socket, &msg)
 	}
 }
 
@@ -53,27 +64,29 @@ func run() error {
 	return http.ListenAndServe(":8080", nil)
 }
 
-//func supervisor() {
-//	sig := make(chan os.Signal)
-//	signal.Notify(sig, syscall.SIGTERM)
-//
-//	go func() {
-//		for {
-//			<-sig
-//			fmt.Fprintf(os.Stdout, "Restarting...")
-//			if err := run(); err != nil {
-//				panic(err)
-//			}
-//		}
-//	}()
-//}
+func supervisor(errCh <-chan error) {
+	sig := make(chan os.Signal)
+	signal.Notify(sig, syscall.SIGTERM)
+
+	go func() {
+		for {
+			select {
+				case <-errCh:
+					run()
+				case <-sig:
+					run()
+			}
+
+			fmt.Fprintf(os.Stdout, "Restarting...\n")
+		}
+	}()
+}
 
 func main() {
+	errCh := make(chan error)
 	http.Handle("/", websocket.Handler(Game))
-//	go supervisor()
-	for {
-		if err := run(); err != nil {
-			panic(err)
-		}
-	}
+	go supervisor(errCh)
+	errCh<- run()
+
+	select {}
 }
