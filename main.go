@@ -8,6 +8,7 @@ import (
 	"os"
 	"syscall"
 	"github.com/LincolnFaradey/MadRobotsServer/game"
+	"time"
 )
 
 var newGame = game.New()
@@ -31,7 +32,7 @@ func supervisor(errCh <-chan error) {
 					run()
 			}
 
-			fmt.Fprintf(os.Stdout, "Restarting...\n")
+			fmt.Fprintf(os.Stdout, "Restarting... %s\n", time.Now().Format(time.Stamp))
 		}
 	}()
 }
