@@ -1,46 +1,65 @@
 package game
 import (
 	"golang.org/x/net/websocket"
-	"fmt"
+	"sync"
+	"github.com/lincolnfaradey/madrobotsserver/user"
 )
 
-type Player struct {
-	Name   string          `json:"name"`
-	X      float32         `json:"x"`
-	Y      float32         `json:"y"`
-	Socket *websocket.Conn `json:"-"`
+
+
+var once sync.Once
+var instance *game = nil
+
+
+type game struct {
+	Players map[string] user.User
 }
 
-func Game(ws *websocket.Conn) {
+type Message struct {
+	Method string `json:"method"`
+	UserName string `json:"name"`
+}
+
+func New() *game {
+	once.Do(func() {
+		instance = &game{
+			Players: make(map[string] user.User),
+		}
+	})
+	return instance
+}
+
+
+func (g *game)Start(ws *websocket.Conn) {
 	defer ws.Close()
 
-	var player Player
+	var player user.User
 	for {
 		if err := websocket.JSON.Receive(ws, &player); err != nil {
 			panic(err)
 			return
 		}
 		player.Socket = ws
-		activePlayers[player.Name] = player
-		fmt.Println(player)
-		for k, v := range activePlayers {
+		g.Players[player.Name] = player
+		for k, v := range g.Players {
 			if k == player.Name {
 				continue
 			}
 
 			if err := websocket.JSON.Send(v.Socket, player); err != nil {
-				delete(activePlayers, k)
+				delete(g.Players, k)
 
-				go func() {
-					for _, p := range activePlayers {
-						websocket.JSON.Send(p.Socket, &Player{
-							Name: k,
-							X:    0,
-							Y:    0,
-						})
-					}
-				}()
+				go g.SendMessageAll(&Message{
+						Method: "destroy",
+						UserName: k,
+					})
 			}
 		}
+	}
+}
+
+func (g *game)SendMessageAll(msg *Message)  {
+	for _, p := range g.Players {
+		websocket.JSON.Send(p.Socket, &msg)
 	}
 }
