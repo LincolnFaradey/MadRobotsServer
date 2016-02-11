@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"os"
 	"syscall"
-	"github.com/lincolnfaradey/madrobotsserver/game"
+	"github.com/LincolnFaradey/MadRobotsServer/game"
 )
 
 var newGame = game.New()

@@ -2,7 +2,7 @@ package game
 import (
 	"golang.org/x/net/websocket"
 	"sync"
-	"github.com/lincolnfaradey/madrobotsserver/user"
+	"github.com/LincolnFaradey/MadRobotsServer/user"
 )
 
 
